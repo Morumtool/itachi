@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Character, DiscordUser, ViewMode } from './types';
 import { INITIAL_CHARACTERS } from './data/initialCharacters';
+import {
+  subscribeCharacters,
+  seedInitialCharactersIfEmpty,
+  saveCharacterToDb,
+  deleteCharacterFromDb,
+  resetDatabaseToInitial,
+} from './lib/firebase';
 import { Navbar } from './components/Navbar';
 import { HeroStats } from './components/HeroStats';
 import { CharacterCard } from './components/CharacterCard';
@@ -91,7 +98,22 @@ export default function App() {
     }
   }, []);
 
-  // キャラデータ保存
+  // Firestore リアルタイム同期 & 初期データシード
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+    seedInitialCharactersIfEmpty(INITIAL_CHARACTERS).then(() => {
+      unsubscribe = subscribeCharacters((updatedChars) => {
+        if (updatedChars && updatedChars.length > 0) {
+          setCharacters(updatedChars);
+        }
+      });
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
+  // キャラデータローカル保存バックアップ
   useEffect(() => {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(characters));
@@ -136,8 +158,8 @@ export default function App() {
   // 権限判定: ユーザーがログインしており、かつ特定のサーバーに参加しているか
   const isAuthorized = !!(currentUser && currentUser.inTargetServer);
 
-  // キャラ新規作成 / 編集の保存処理
-  const handleSaveCharacter = (
+  // キャラ新規作成 / 編集の保存処理（Firestore同期）
+  const handleSaveCharacter = async (
     data: Omit<Character, 'id' | 'createdAt'>,
     editId?: string
   ) => {
@@ -148,13 +170,21 @@ export default function App() {
 
     if (editId) {
       // 編集更新
-      setCharacters((prev) =>
-        prev.map((c) =>
-          c.id === editId
-            ? { ...c, ...data }
-            : c
-        )
-      );
+      const targetChar = characters.find((c) => c.id === editId);
+      if (targetChar) {
+        const updatedChar: Character = {
+          ...targetChar,
+          ...data,
+        };
+        setCharacters((prev) =>
+          prev.map((c) => (c.id === editId ? updatedChar : c))
+        );
+        try {
+          await saveCharacterToDb(updatedChar);
+        } catch (err) {
+          console.error('Failed to update character in Firestore:', err);
+        }
+      }
     } else {
       // 新規作成
       const newChar: Character = {
@@ -164,23 +194,38 @@ export default function App() {
         isCustom: true,
       };
       setCharacters((prev) => [newChar, ...prev]);
+      try {
+        await saveCharacterToDb(newChar);
+      } catch (err) {
+        console.error('Failed to create character in Firestore:', err);
+      }
     }
   };
 
-  // キャラ削除処理
-  const handleConfirmDelete = (id: string) => {
+  // キャラ削除処理（Firestore同期）
+  const handleConfirmDelete = async (id: string) => {
     if (!isAuthorized) {
       setIsDiscordModalOpen(true);
       return;
     }
     setCharacters((prev) => prev.filter((c) => c.id !== id));
+    try {
+      await deleteCharacterFromDb(id);
+    } catch (err) {
+      console.error('Failed to delete character from Firestore:', err);
+    }
   };
 
-  // 初期データにリセット
-  const handleResetData = () => {
+  // 初期データにリセット（Firestore同期）
+  const handleResetData = async () => {
     if (window.confirm('初期キャラクターデータ（20体）にリセットしますか？')) {
       setCharacters(INITIAL_CHARACTERS);
       localStorage.removeItem(LOCAL_STORAGE_KEY);
+      try {
+        await resetDatabaseToInitial(INITIAL_CHARACTERS);
+      } catch (err) {
+        console.error('Failed to reset Firestore database:', err);
+      }
     }
   };
 

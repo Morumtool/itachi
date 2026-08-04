@@ -33,10 +33,10 @@ export const DeploymentGuide: React.FC = () => {
             プロジェクトに <code className="text-amber-300">wrangler.jsonc</code> (または <code className="text-amber-300">wrangler.toml</code>) が含まれている場合、Cloudflare ダッシュボードでは通常の「Variables」の編集が制限され、<strong>「Secrets (暗号化変数)」として登録する仕様</strong>になります。
           </p>
 
-          <div className="bg-amber-950/40 border border-amber-500/30 p-4 rounded-xl text-amber-200 font-semibold space-y-1">
-            <p className="text-xs font-bold text-amber-300">💡 ダッシュボードから直接登録する方法 (推奨):</p>
-            <p className="text-[11px] text-amber-200/90 font-normal">
-              通常の変数追加ではなく、ダッシュボードの <strong>「Add secret」 (または Secrets の追加)</strong> ボタンから登録すれば、すべての環境変数をダッシュボード上で問題なく追加・上書きできます！
+          <div className="bg-emerald-950/40 border border-emerald-500/30 p-4 rounded-xl text-emerald-200 font-semibold space-y-1">
+            <p className="text-xs font-bold text-emerald-300">💡 名前衝突エラー（Binding name already in use）の解決:</p>
+            <p className="text-[11px] text-emerald-200/90 font-normal">
+              <code className="text-amber-300">wrangler.jsonc</code> 内の <code className="text-amber-300">vars</code> 設定を削除しました。これにより、Cloudflare ダッシュボードの <strong>Variables / Secrets</strong> で登録した値と名前が重複してビルドエラーになるのを防ぎ、ダッシュボードで設定した環境変数がそのまま Function に反映されます。
             </p>
           </div>
 

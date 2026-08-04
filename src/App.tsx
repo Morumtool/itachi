@@ -51,7 +51,7 @@ export default function App() {
     return INITIAL_CHARACTERS;
   });
 
-  // Discordログイン状態 (初期状態はログアウト状態 null)
+  // Discordログイン状態 (初期状態はログアウト状態null)
   const [currentUser, setCurrentUser] = useState<DiscordUser | null>(() => {
     try {
       const saved = localStorage.getItem(DISCORD_USER_KEY);

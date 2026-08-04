@@ -43,7 +43,7 @@ export const DeploymentGuide: React.FC = () => {
           <ol className="list-decimal list-inside space-y-2 bg-zinc-950 p-4 rounded-xl border border-zinc-800 text-zinc-300">
             <li>Cloudflare ダッシュボードにログインし、対象の <strong>Pages プロジェクト</strong> を開きます。</li>
             <li><strong>Settings → Variables and secrets</strong> メニューを開きます。</li>
-            <li><strong>Add secret</strong> ボタンをクリックし、以下の4つを Secret として登録します：
+            <li><strong>Add secret</strong> (または Variables) ボタンをクリックし、以下の4つを登録します：
               <div className="mt-2 space-y-2 font-mono text-[11px] bg-zinc-900 p-3 rounded-lg border border-zinc-800">
                 <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_ID</span> : Discord Developer Portalの Client ID</div>
                 <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_SECRET</span> : Discord Developer Portalの Client Secret</div>
@@ -51,8 +51,28 @@ export const DeploymentGuide: React.FC = () => {
                 <div><span className="text-indigo-400 font-bold">DISCORD_GUILD_ID</span> : 特定Discordサーバーの ギルドID</div>
               </div>
             </li>
-            <li>設定を保存後、<strong>Deployments タブから「Retry deployment」 (または再デプロイ)</strong> を行うと環境変数が反映されます。</li>
+            <li><strong>【重要】環境変数追加後に最新コードをGitHubへプッシュ（再デプロイ）</strong>してください。</li>
           </ol>
+
+          <div className="bg-rose-950/40 border border-rose-500/30 p-4 rounded-xl text-rose-200 space-y-2 font-sans">
+            <p className="text-xs font-bold text-rose-300 flex items-center gap-1">
+              ⚠️ それでも環境変数エラーが解消されない場合の確認チェックリスト：
+            </p>
+            <ul className="list-disc list-inside space-y-1.5 text-[11px] text-rose-200/90 leading-relaxed">
+              <li>
+                <strong>① 「Production」環境に登録されているか：</strong><br />
+                Cloudflareダッシュボードの [Settings] → [Variables and secrets] で、<strong>「Production」</strong> の欄に変数が追加されているか確認してください（Previewのみに追加されていると本番URLで読み込めません）。
+              </li>
+              <li>
+                <strong>② 最新コードのプッシュ（GitHubコミット）：</strong><br />
+                直前にエラーとなっていた <code className="text-amber-300">wrangler.jsonc</code> の修正コードを GitHub に <code className="text-emerald-300">git push</code> してください。ビルドエラーが解消された新しいビルドがデプロイされることで初めて環境変数がFunctionsに接続されます。
+              </li>
+              <li>
+                <strong>③ 環境変数名（スペル・大文字）の確認：</strong><br />
+                変数名が完全一致（例: <code className="text-indigo-300">DISCORD_CLIENT_ID</code>）しているか、余計な空白スペースが含まれていないか確認してください。
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 

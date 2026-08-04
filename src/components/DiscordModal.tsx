@@ -91,7 +91,7 @@ export const DiscordModal: React.FC<DiscordModalProps> = ({
                       <p className="text-xs opacity-90 leading-relaxed">
                         {currentUser.inTargetServer
                           ? 'キャラクターの新規作成・編集・削除権限が有効化されています。'
-                          : 'キャラクターの作成・編集・削除には指定のDiscordサーバーへの参加が必要です。'}
+                          : 'キャラクターの作成・編集・削除にはDiscordサーバー「イタチイタ鯖」への参加が必要です。'}
                       </p>
                     </div>
                   </div>
@@ -119,7 +119,7 @@ export const DiscordModal: React.FC<DiscordModalProps> = ({
               /* ログアウト中表示 */
               <div className="space-y-4">
                 <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                  指定のDiscordサーバーに参加しているアカウントでログインすると、キャラクターの新規作成・編集・削除が利用可能になります。
+                  Discordサーバー「イタチイタ鯖」に参加しているアカウントでログインすると、キャラクターの新規作成・編集・削除が利用可能になります。
                 </p>
 
                 {/* 環境変数未設定時の通知警告ボックス */}

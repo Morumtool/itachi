@@ -320,7 +320,7 @@ export default function App() {
                   className="px-3 py-2 bg-amber-950/40 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-900/40 transition-colors"
                 >
                   <Lock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>作成/編集にはDiscordログイン＆特定サーバー参加が必要</span>
+                  <span>作成/編集にはDiscord「イタチイタ鯖」参加が必要</span>
                 </button>
               )}
 

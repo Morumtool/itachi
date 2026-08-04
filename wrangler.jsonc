@@ -2,7 +2,12 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "itachi",
   "compatibility_date": "2026-08-04",
-  "pages_build_output_dir": "./dist"
+  "pages_build_output_dir": "./dist",
+  "vars": {
+    "DISCORD_CLIENT_ID": "YOUR_DISCORD_CLIENT_ID",
+    "DISCORD_REDIRECT_URI": "https://itachi-781.pages.dev/api/auth/discord/callback",
+    "DISCORD_GUILD_ID": "YOUR_DISCORD_GUILD_ID"
+  }
   // KVを使用する場合はCloudflareダッシュボードでKVを作成後、以下を有効化してください
   // "kv_namespaces": [
   //   {

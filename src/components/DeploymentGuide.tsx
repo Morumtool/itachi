@@ -25,26 +25,33 @@ export const DeploymentGuide: React.FC = () => {
       {/* Cloudflare Pages 環境変数設定の手順 */}
       <div className="bg-zinc-900/90 border border-indigo-500/30 p-6 rounded-2xl space-y-4 shadow-xl">
         <h3 className="text-base font-extrabold text-indigo-300 flex items-center gap-2">
-          <Key className="w-5 h-5 text-indigo-400" /> Cloudflare Pages 環境変数 (Variables and secrets) の設定
+          <Key className="w-5 h-5 text-indigo-400" /> Cloudflare ダッシュボードでの環境変数設定手順
         </h3>
 
         <div className="space-y-3 text-xs text-zinc-300 leading-relaxed">
           <p className="text-zinc-400">
-            Discord 連携認証機能を使用するには、Cloudflare Pages のダッシュボードで以下の環境変数を登録する必要があります。
+            プロジェクトに <code className="text-amber-300">wrangler.jsonc</code> (または <code className="text-amber-300">wrangler.toml</code>) が含まれている場合、Cloudflare ダッシュボードでは通常の「Variables」の編集が制限され、<strong>「Secrets (暗号化変数)」として登録する仕様</strong>になります。
           </p>
+
+          <div className="bg-amber-950/40 border border-amber-500/30 p-4 rounded-xl text-amber-200 font-semibold space-y-1">
+            <p className="text-xs font-bold text-amber-300">💡 ダッシュボードから直接登録する方法 (推奨):</p>
+            <p className="text-[11px] text-amber-200/90 font-normal">
+              通常の変数追加ではなく、ダッシュボードの <strong>「Add secret」 (または Secrets の追加)</strong> ボタンから登録すれば、すべての環境変数をダッシュボード上で問題なく追加・上書きできます！
+            </p>
+          </div>
 
           <ol className="list-decimal list-inside space-y-2 bg-zinc-950 p-4 rounded-xl border border-zinc-800 text-zinc-300">
             <li>Cloudflare ダッシュボードにログインし、対象の <strong>Pages プロジェクト</strong> を開きます。</li>
             <li><strong>Settings → Variables and secrets</strong> メニューを開きます。</li>
-            <li><strong>Add variable</strong> (または Environment Variables) をクリックし、以下を登録します：
+            <li><strong>Add secret</strong> ボタンをクリックし、以下の4つを Secret として登録します：
               <div className="mt-2 space-y-2 font-mono text-[11px] bg-zinc-900 p-3 rounded-lg border border-zinc-800">
                 <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_ID</span> : Discord Developer Portalの Client ID</div>
                 <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_SECRET</span> : Discord Developer Portalの Client Secret</div>
-                <div><span className="text-indigo-400 font-bold">DISCORD_REDIRECT_URI</span> : <code className="text-amber-300">https://your-app.pages.dev/api/auth/discord/callback</code></div>
+                <div><span className="text-indigo-400 font-bold">DISCORD_REDIRECT_URI</span> : <code className="text-amber-300">https://itachi-781.pages.dev/api/auth/discord/callback</code></div>
                 <div><span className="text-indigo-400 font-bold">DISCORD_GUILD_ID</span> : 特定Discordサーバーの ギルドID</div>
               </div>
             </li>
-            <li>設定を保存し、再デプロイ（または「Deployments」で再作成）を行うと有効化されます。</li>
+            <li>設定を保存後、<strong>Deployments タブから「Retry deployment」 (または再デプロイ)</strong> を行うと環境変数が反映されます。</li>
           </ol>
         </div>
       </div>

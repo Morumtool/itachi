@@ -33,11 +33,44 @@ export const DeploymentGuide: React.FC = () => {
             プロジェクトに <code className="text-amber-300">wrangler.jsonc</code> (または <code className="text-amber-300">wrangler.toml</code>) が含まれている場合、Cloudflare ダッシュボードでは通常の「Variables」の編集が制限され、<strong>「Secrets (暗号化変数)」として登録する仕様</strong>になります。
           </p>
 
-          <div className="bg-emerald-950/40 border border-emerald-500/30 p-4 rounded-xl text-emerald-200 font-semibold space-y-1">
-            <p className="text-xs font-bold text-emerald-300">💡 名前衝突エラー（Binding name already in use）の解決:</p>
-            <p className="text-[11px] text-emerald-200/90 font-normal">
-              <code className="text-amber-300">wrangler.jsonc</code> 内の <code className="text-amber-300">vars</code> 設定を削除しました。これにより、Cloudflare ダッシュボードの <strong>Variables / Secrets</strong> で登録した値と名前が重複してビルドエラーになるのを防ぎ、ダッシュボードで設定した環境変数がそのまま Function に反映されます。
+          <div className="bg-rose-950/40 border border-rose-500/40 p-4 sm:p-5 rounded-xl text-rose-200 font-semibold space-y-3">
+            <p className="text-xs sm:text-sm font-bold text-rose-300 flex items-center gap-1.5">
+              🛑 Cloudflare Dashboardでのロック（編集不可・削除不可・重複エラー）の完全解決策
             </p>
+            <p className="text-[11px] sm:text-xs text-rose-200/90 font-normal leading-relaxed">
+              Cloudflare Pages はリポジトリに <code className="text-amber-300">wrangler.jsonc</code> が存在すると、過去に宣言された変数をダッシュボード上でロックし、<strong>編集・削除・Secretの追加（衝突エラー）を受け付けなくする仕様</strong>です。
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-[11px] sm:text-xs font-normal">
+              <div className="bg-zinc-950/90 p-3.5 rounded-xl border border-emerald-500/40 space-y-2">
+                <p className="font-bold text-emerald-300 text-xs flex items-center gap-1">
+                  【方法 A】wrangler.jsonc に直接記入（一番簡単・確実！）
+                </p>
+                <p className="text-zinc-300 leading-relaxed text-[11px]">
+                  ダッシュボードでの操作で詰まった場合、GitHub の <code className="text-amber-300">wrangler.jsonc</code> 内の <code className="text-amber-300">vars</code> に直接あなたの実際の ID（数字）を記入して Git プッシュしてください。自動的に即座に反映されます。
+                </p>
+                <div className="bg-zinc-900 p-2 rounded text-[10px] font-mono text-emerald-300 overflow-x-auto border border-zinc-800">
+                  "vars": &#123;<br />
+                  &nbsp;&nbsp;"DISCORD_CLIENT_ID": "12345678...",<br />
+                  &nbsp;&nbsp;"DISCORD_REDIRECT_URI": "https://...",<br />
+                  &nbsp;&nbsp;"DISCORD_GUILD_ID": "98765432..."<br />
+                  &#125;
+                </div>
+                <p className="text-[10px] text-zinc-400">
+                  ※ <code className="text-amber-300">DISCORD_CLIENT_SECRET</code> のみは過去に存在しないため、ダッシュボードの <strong>Add secret</strong> から問題なく追加できます。
+                </p>
+              </div>
+
+              <div className="bg-zinc-950/90 p-3.5 rounded-xl border border-indigo-500/40 space-y-2">
+                <p className="font-bold text-indigo-300 text-xs flex items-center gap-1">
+                  【方法 B】ダッシュボードだけで管理したい場合
+                </p>
+                <p className="text-zinc-300 leading-relaxed text-[11px]">
+                  すべての変数を Cloudflare ダッシュボード上で管理したい場合は、リポジトリから <code className="text-amber-300">wrangler.jsonc</code> ファイルを削除して Git プッシュします。<br />
+                  Wrangler 連動が解除され、ダッシュボードでのロックが完全に外れます。
+                </p>
+              </div>
+            </div>
           </div>
 
           <ol className="list-decimal list-inside space-y-2 bg-zinc-950 p-4 rounded-xl border border-zinc-800 text-zinc-300">
@@ -45,10 +78,10 @@ export const DeploymentGuide: React.FC = () => {
             <li><strong>Settings → Variables and secrets</strong> メニューを開きます。</li>
             <li><strong>Add secret</strong> (または Variables) ボタンをクリックし、以下の4つを登録します：
               <div className="mt-2 space-y-2 font-mono text-[11px] bg-zinc-900 p-3 rounded-lg border border-zinc-800">
-                <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_ID</span> : Discord Developer Portalの Client ID</div>
-                <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_SECRET</span> : Discord Developer Portalの Client Secret</div>
+                <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_ID</span> : Discord Developer Portalの Client ID (数字のID。例: <code className="text-amber-300">123456789012345678</code>)</div>
+                <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_SECRET</span> : Discord Developer Portalの Client Secret (暗号化文字列)</div>
                 <div><span className="text-indigo-400 font-bold">DISCORD_REDIRECT_URI</span> : <code className="text-amber-300">https://itachi-781.pages.dev/api/auth/discord/callback</code></div>
-                <div><span className="text-indigo-400 font-bold">DISCORD_GUILD_ID</span> : 特定Discordサーバーの ギルドID</div>
+                <div><span className="text-indigo-400 font-bold">DISCORD_GUILD_ID</span> : 対象Discordサーバーの ギルドID (数字のID。例: <code className="text-amber-300">987654321098765432</code>)</div>
               </div>
             </li>
             <li><strong>【重要】環境変数追加後に最新コードをGitHubへプッシュ（再デプロイ）</strong>してください。</li>

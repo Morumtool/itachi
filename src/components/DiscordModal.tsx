@@ -1,40 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { DiscordUser } from '../types';
-import { X, CheckCircle2, ShieldAlert, LogOut, Disc as DiscordIcon, ShieldCheck } from 'lucide-react';
+import { X, CheckCircle2, ShieldAlert, LogOut, Disc as DiscordIcon, ExternalLink, AlertTriangle } from 'lucide-react';
 
 interface DiscordModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentUser: DiscordUser | null;
-  onLogin: (user: DiscordUser) => void;
   onLogout: () => void;
-  onToggleServer: (inServer: boolean) => void;
+  envError?: boolean;
 }
 
 export const DiscordModal: React.FC<DiscordModalProps> = ({
   isOpen,
   onClose,
   currentUser,
-  onLogin,
   onLogout,
-  onToggleServer,
+  envError = false,
 }) => {
-  const [usernameInput, setUsernameInput] = useState('ItachiHero_99');
-
   if (!isOpen) return null;
-
-  const handleSimulateLogin = (inServer: boolean) => {
-    const mockUser: DiscordUser = {
-      id: `discord-${Date.now()}`,
-      username: usernameInput || 'ItachiHero',
-      globalName: usernameInput || 'イタチイタ隊員',
-      avatar: '🥷',
-      inTargetServer: inServer,
-    };
-    onLogin(mockUser);
-    onClose();
-  };
 
   return (
     <AnimatePresence>
@@ -53,7 +37,7 @@ export const DiscordModal: React.FC<DiscordModalProps> = ({
               </div>
               <div>
                 <h3 className="font-bold text-lg text-white">Discord 連携認証</h3>
-                <p className="text-xs text-gray-400 font-mono">OFFICIAL DISCORD AUTHENTICATION</p>
+                <p className="text-xs text-gray-400 font-mono">DISCORD AUTHENTICATION</p>
               </div>
             </div>
             <button
@@ -102,39 +86,10 @@ export const DiscordModal: React.FC<DiscordModalProps> = ({
                       </div>
                       <p className="text-xs opacity-90 leading-relaxed">
                         {currentUser.inTargetServer
-                          ? 'キャラの新規作成、編集、削除権限が有効化されています。'
-                          : 'キャラの作成・編集・削除には特定Discordサーバーへの参加が必要です。'}
+                          ? 'キャラクターの新規作成・編集・削除権限が有効化されています。'
+                          : 'キャラクターの作成・編集・削除には指定のDiscordサーバーへの参加が必要です。'}
                       </p>
                     </div>
-                  </div>
-                </div>
-
-                {/* サーバー参加トグル切替 */}
-                <div className="pt-2">
-                  <label className="text-[10px] font-mono uppercase tracking-widest text-gray-500 font-bold block mb-2">
-                    デモ用: サーバー参加ステータス切替
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => onToggleServer(true)}
-                      className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 border ${
-                        currentUser.inTargetServer
-                          ? 'bg-emerald-600 text-white border-emerald-400 shadow-lg'
-                          : 'bg-[#0A0A0B] text-gray-300 border-white/10 hover:border-white/30'
-                      }`}
-                    >
-                      <ShieldCheck className="w-4 h-4" /> サーバー参加中
-                    </button>
-                    <button
-                      onClick={() => onToggleServer(false)}
-                      className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 border ${
-                        !currentUser.inTargetServer
-                          ? 'bg-amber-600 text-white border-amber-400 shadow-lg'
-                          : 'bg-[#0A0A0B] text-gray-300 border-white/10 hover:border-white/30'
-                      }`}
-                    >
-                      <ShieldAlert className="w-4 h-4" /> 未参加状態
-                    </button>
                   </div>
                 </div>
 
@@ -157,51 +112,45 @@ export const DiscordModal: React.FC<DiscordModalProps> = ({
                 </div>
               </div>
             ) : (
-              /* ログイン前表示 */
+              /* ログアウト中表示 */
               <div className="space-y-4">
-                <p className="text-sm text-gray-300 leading-relaxed">
-                  「イタチイタ戦隊」特定のDiscordサーバーに参加しているアカウントで連携すると、キャラクターの新規作成・編集・削除ができるようになります。
+                <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                  指定のDiscordサーバーに参加しているアカウントでログインすると、キャラクターの新規作成・編集・削除が利用可能になります。
                 </p>
 
-                <div>
-                  <label className="text-[10px] font-mono uppercase tracking-widest text-gray-500 font-bold block mb-1.5">
-                    DISCORD USERNAME
-                  </label>
-                  <input
-                    type="text"
-                    value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value)}
-                    placeholder="ユーザー名を入力"
-                    className="w-full bg-[#0A0A0B] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                  />
-                </div>
+                {/* 環境変数未設定時の通知警告ボックス */}
+                {envError && (
+                  <div className="bg-rose-950/50 border border-rose-500/40 rounded-xl p-4 text-xs text-rose-200 space-y-2">
+                    <div className="flex items-center gap-2 font-bold text-rose-300 text-sm">
+                      <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                      Cloudflare Pages 環境変数が未設定です
+                    </div>
+                    <p className="text-[11px] leading-relaxed text-rose-300/90">
+                      Cloudflare ダッシュボードの Pages プロジェクト [Settings] → [Variables and secrets] にて、以下の環境変数を追加してください：
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 font-mono text-[10px] text-rose-200 bg-black/40 p-2.5 rounded-lg border border-rose-500/20">
+                      <li>DISCORD_CLIENT_ID</li>
+                      <li>DISCORD_CLIENT_SECRET</li>
+                      <li>DISCORD_REDIRECT_URI</li>
+                      <li>DISCORD_GUILD_ID</li>
+                    </ul>
+                  </div>
+                )}
 
-                <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4 text-xs text-indigo-200 leading-relaxed">
-                  💡 <strong>提示:</strong> ログイン後に「特定のサーバーに参加している状態」で認証をシミュレーションできます。
-                </div>
-
-                <div className="space-y-2 pt-2">
-                  {/* 本番環境 (Cloudflare Pages) 用 OAuth リアルログイン */}
+                <div className="pt-2">
                   <a
                     href="/api/auth/discord/login"
                     className="w-full py-3 px-4 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-950/50 transition-all flex items-center justify-center gap-2 block text-center"
                   >
-                    <DiscordIcon className="w-5 h-5" /> Discordアカウントで本番OAuth連携
+                    <DiscordIcon className="w-5 h-5" /> Discordアカウントでログイン
                   </a>
+                </div>
 
-                  {/* デモ用シミュレーションログインボタン */}
-                  <button
-                    onClick={() => handleSimulateLogin(true)}
-                    className="w-full py-2.5 px-4 bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 rounded-xl font-medium text-xs transition-all flex items-center justify-center gap-2"
-                  >
-                    【デモ用】特定サーバー参加済として簡易ログイン
-                  </button>
-                  <button
-                    onClick={() => handleSimulateLogin(false)}
-                    className="w-full py-2 px-4 bg-black/20 hover:bg-black/40 text-gray-400 rounded-xl font-medium text-[11px] transition-all flex items-center justify-center gap-2"
-                  >
-                    【デモ用】未参加状態として簡易ログイン
-                  </button>
+                <div className="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-3 text-[11px] text-indigo-300 leading-relaxed flex items-start gap-2">
+                  <ExternalLink className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                  <span>
+                    クリックするとDiscordの公式OAuth2認証画面へ移動します。
+                  </span>
                 </div>
               </div>
             )}

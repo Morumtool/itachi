@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Character, DiscordUser, ViewMode, Alignment } from './types';
+import { Character, DiscordUser, ViewMode } from './types';
 import { INITIAL_CHARACTERS } from './data/initialCharacters';
 import { Navbar } from './components/Navbar';
 import { HeroStats } from './components/HeroStats';
@@ -22,8 +22,6 @@ import {
   Swords,
   Users,
   Lock,
-  PlusCircle,
-  HelpCircle,
 } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'itachi_characters_v2';
@@ -46,25 +44,25 @@ export default function App() {
     return INITIAL_CHARACTERS;
   });
 
-  // Discordログイン状態 (localStorage 永続化)
+  // Discordログイン状態 (初期状態はログアウト状態 null)
   const [currentUser, setCurrentUser] = useState<DiscordUser | null>(() => {
     try {
       const saved = localStorage.getItem(DISCORD_USER_KEY);
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // デモ用のアカウントが残っている場合はクリアして null にする
+        if (parsed && parsed.id && !parsed.id.startsWith('discord-demo')) {
+          return parsed;
+        }
       }
     } catch (e) {
       console.error('Failed to load user', e);
     }
-    // 初期状態はデフォルトで特定サーバー参加中のデモユーザーを設定
-    return {
-      id: 'discord-demo-1',
-      username: 'ItachiHero',
-      globalName: 'イタチ隊長',
-      avatar: '🥷',
-      inTargetServer: true,
-    };
+    return null;
   });
+
+  // 環境変数未設定エラー状態
+  const [envError, setEnvError] = useState(false);
 
   // 表示モード ('catalog' | 'ranking' | 'features' | 'guide')
   const [currentView, setCurrentView] = useState<ViewMode>('catalog');
@@ -81,6 +79,17 @@ export default function App() {
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const [deletingCharacter, setDeletingCharacter] = useState<Character | null>(null);
+
+  // URLのクエリパラメータチェック（Cloudflare環境変数未設定時のエラーハンドリング）
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error') === 'discord_env_missing') {
+      setEnvError(true);
+      setIsDiscordModalOpen(true);
+      // URLからクエリパラメータをきれいに削除
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   // キャラデータ保存
   useEffect(() => {
@@ -113,6 +122,8 @@ export default function App() {
           const data = await res.json();
           if (data.authenticated && data.user) {
             setCurrentUser(data.user);
+          } else {
+            setCurrentUser(null);
           }
         }
       } catch {
@@ -170,6 +181,16 @@ export default function App() {
     if (window.confirm('初期キャラクターデータ（20体）にリセットしますか？')) {
       setCharacters(INITIAL_CHARACTERS);
       localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
+  };
+
+  // ログアウト処理
+  const handleLogout = async () => {
+    setCurrentUser(null);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // ignore
     }
   };
 
@@ -254,7 +275,7 @@ export default function App() {
                   className="px-3 py-2 bg-amber-950/40 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-900/40 transition-colors"
                 >
                   <Lock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>作成/編集にはDiscord特定サーバー参加が必要</span>
+                  <span>作成/編集にはDiscordログイン＆特定サーバー参加が必要</span>
                 </button>
               )}
 
@@ -412,7 +433,7 @@ export default function App() {
           イタチイタ戦隊 公式キャラクターデータベース © 2026
         </p>
         <p className="max-w-xl mx-auto px-4 text-[11px] text-gray-500">
-          Vite + React + Tailwind CSS + Motion による超高速・レスポンシブWebアプリケーション。GitHub Pages / Cloudflare Workers 対応。
+          Vite + React + Tailwind CSS + Motion による超高速・レスポンシブWebアプリケーション。GitHub Pages / Cloudflare Pages 対応。
         </p>
       </footer>
 
@@ -438,15 +459,13 @@ export default function App() {
 
       <DiscordModal
         isOpen={isDiscordModalOpen}
-        onClose={() => setIsDiscordModalOpen(false)}
-        currentUser={currentUser}
-        onLogin={(u) => setCurrentUser(u)}
-        onLogout={() => setCurrentUser(null)}
-        onToggleServer={(inServer) => {
-          if (currentUser) {
-            setCurrentUser({ ...currentUser, inTargetServer: inServer });
-          }
+        onClose={() => {
+          setIsDiscordModalOpen(false);
+          setEnvError(false);
         }}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        envError={envError}
       />
 
     </div>

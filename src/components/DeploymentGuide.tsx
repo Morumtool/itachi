@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Cloud, FileText, CheckCircle2, Terminal } from 'lucide-react';
+import { Github, Cloud, FileText, CheckCircle2, Terminal, Key } from 'lucide-react';
 
 export const DeploymentGuide: React.FC = () => {
   return (
@@ -13,12 +13,39 @@ export const DeploymentGuide: React.FC = () => {
           </div>
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              GitHub Pages & Cloudflare Workers / Pages 公開ガイド
+              GitHub Pages & Cloudflare Pages 公開・環境変数設定ガイド
             </h2>
             <p className="text-xs sm:text-sm text-zinc-400">
-              作成したWebサイトを無料で世界中に公開・高速配信するための完全ステップバイステップ手順です。
+              作成したWebサイトを無料で世界中に公開・高速配信し、Discord OAuth連携環境変数を設定する完全手順です。
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Cloudflare Pages 環境変数設定の手順 */}
+      <div className="bg-zinc-900/90 border border-indigo-500/30 p-6 rounded-2xl space-y-4 shadow-xl">
+        <h3 className="text-base font-extrabold text-indigo-300 flex items-center gap-2">
+          <Key className="w-5 h-5 text-indigo-400" /> Cloudflare Pages 環境変数 (Variables and secrets) の設定
+        </h3>
+
+        <div className="space-y-3 text-xs text-zinc-300 leading-relaxed">
+          <p className="text-zinc-400">
+            Discord 連携認証機能を使用するには、Cloudflare Pages のダッシュボードで以下の環境変数を登録する必要があります。
+          </p>
+
+          <ol className="list-decimal list-inside space-y-2 bg-zinc-950 p-4 rounded-xl border border-zinc-800 text-zinc-300">
+            <li>Cloudflare ダッシュボードにログインし、対象の <strong>Pages プロジェクト</strong> を開きます。</li>
+            <li><strong>Settings → Variables and secrets</strong> メニューを開きます。</li>
+            <li><strong>Add variable</strong> (または Environment Variables) をクリックし、以下を登録します：
+              <div className="mt-2 space-y-2 font-mono text-[11px] bg-zinc-900 p-3 rounded-lg border border-zinc-800">
+                <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_ID</span> : Discord Developer Portalの Client ID</div>
+                <div><span className="text-indigo-400 font-bold">DISCORD_CLIENT_SECRET</span> : Discord Developer Portalの Client Secret</div>
+                <div><span className="text-indigo-400 font-bold">DISCORD_REDIRECT_URI</span> : <code className="text-amber-300">https://your-app.pages.dev/api/auth/discord/callback</code></div>
+                <div><span className="text-indigo-400 font-bold">DISCORD_GUILD_ID</span> : 特定Discordサーバーの ギルドID</div>
+              </div>
+            </li>
+            <li>設定を保存し、再デプロイ（または「Deployments」で再作成）を行うと有効化されます。</li>
+          </ol>
         </div>
       </div>
 
@@ -117,10 +144,10 @@ jobs:
         </ol>
       </div>
 
-      {/* Cloudflare Workers / Pages 公開手順 */}
+      {/* Cloudflare Pages 公開手順 */}
       <div className="bg-zinc-900/90 border border-zinc-800 p-6 rounded-2xl space-y-4">
         <h3 className="text-base font-extrabold text-orange-400 flex items-center gap-2">
-          <Cloud className="w-5 h-5" /> 3. Cloudflare Pages / Workers での公開手順
+          <Cloud className="w-5 h-5" /> 3. Cloudflare Pages での公開手順
         </h3>
 
         <div className="space-y-4 text-xs text-zinc-300 leading-relaxed">
@@ -139,20 +166,20 @@ jobs:
                   <li>ビルド出力ディレクトリ: <code className="text-emerald-400">dist</code></li>
                 </ul>
               </li>
-              <li>「保存してデプロイ」をクリックするだけで、世界最速クラスのCDNで即座に公開されます！</li>
+              <li>「保存してデプロイ」をクリックすると自動的にデプロイされます！</li>
             </ol>
           </div>
 
           <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-2">
             <h4 className="font-bold text-indigo-300 flex items-center gap-1.5">
-              <Terminal className="w-4 h-4 text-indigo-400" /> 方法B: Wrangler CLI を使ったコマンド一発公開 (Workers)
+              <Terminal className="w-4 h-4 text-indigo-400" /> 方法B: Wrangler CLI を使ったコマンドデプロイ
             </h4>
             <pre className="bg-zinc-900 p-3 rounded-xl text-zinc-200 font-mono text-[11px] overflow-x-auto">
 {`# 1. ビルド実行
 npm run build
 
 # 2. Wrangler CLI で Cloudflare Pages へ即座にデプロイ
-npx wrangler pages deploy dist --project-name=itachi-chara`}
+npx wrangler pages deploy dist --project-name=itachi-781`}
             </pre>
           </div>
         </div>

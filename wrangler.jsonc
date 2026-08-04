@@ -2,11 +2,12 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "itachita-app",
   "compatibility_date": "2026-08-04",
-  "pages_build_output_dir": "./dist",
-  "kv_namespaces": [
-    {
-      "binding": "CHARACTERS_KV",
-      "id": "your_kv_namespace_id"
-    }
-  ]
+  "pages_build_output_dir": "./dist"
+  // KVを使用する場合はCloudflareダッシュボードでKVを作成後、以下を有効化してください
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "CHARACTERS_KV",
+  //     "id": "<YOUR_KV_NAMESPACE_ID>"
+  //   }
+  // ]
 }

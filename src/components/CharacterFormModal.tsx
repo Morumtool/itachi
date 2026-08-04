@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Character, Alignment, ResponseStatus } from '../types';
+import { Character, Alignment } from '../types';
 import { X, Upload, Smile, Link as LinkIcon, Sparkles, AlertCircle } from 'lucide-react';
 
 interface CharacterFormModalProps {
@@ -14,16 +14,6 @@ const EMOJI_PRESETS = [
   '⚡', '🍑', '🏃', '💪', '🎮', '🔒', '🍡', '🎲', '🍲', '❓',
   '🐹', '🥜', '💥', '👁️', '💤', '💮', '🐈', '☘️', '🩳', '👾',
   '🥷', '🤖', '🦊', '🦁', '🐉', '🔥', '👑', '⚔️', '🛡️', '🌟'
-];
-
-const STATUS_OPTIONS: ResponseStatus[] = [
-  '出撃中',
-  '待機中',
-  'クライマックス突入',
-  '自主規制中',
-  '睡眠中',
-  '世界破壊準備中',
-  '潜伏中',
 ];
 
 export const CharacterFormModal: React.FC<CharacterFormModalProps> = ({
@@ -42,7 +32,6 @@ export const CharacterFormModal: React.FC<CharacterFormModalProps> = ({
   const [catchphrase, setCatchphrase] = useState('');
   const [favoriteFood, setFavoriteFood] = useState('');
   const [specialMove, setSpecialMove] = useState('');
-  const [status, setStatus] = useState<ResponseStatus>('出撃中');
   const [featuresText, setFeaturesText] = useState('');
   const [previewDataUrl, setPreviewDataUrl] = useState<string | null>(null);
 
@@ -58,7 +47,6 @@ export const CharacterFormModal: React.FC<CharacterFormModalProps> = ({
       setCatchphrase(editingCharacter.catchphrase || '');
       setFavoriteFood(editingCharacter.favoriteFood || '');
       setSpecialMove(editingCharacter.specialMove || '');
-      setStatus(editingCharacter.status);
       setFeaturesText(editingCharacter.features.join('\n'));
       if (editingCharacter.iconType !== 'emoji') {
         setPreviewDataUrl(editingCharacter.iconValue);
@@ -77,7 +65,6 @@ export const CharacterFormModal: React.FC<CharacterFormModalProps> = ({
       setCatchphrase('');
       setFavoriteFood('');
       setSpecialMove('');
-      setStatus('出撃中');
       setFeaturesText('');
       setPreviewDataUrl(null);
     }
@@ -120,7 +107,6 @@ export const CharacterFormModal: React.FC<CharacterFormModalProps> = ({
         catchphrase: catchphrase.trim(),
         favoriteFood: favoriteFood.trim(),
         specialMove: specialMove.trim(),
-        status,
         features: features.length > 0 ? features : ['特記事項なし'],
       },
       editingCharacter?.id
@@ -383,22 +369,6 @@ export const CharacterFormModal: React.FC<CharacterFormModalProps> = ({
                   className="w-full bg-[#0A0A0B] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white"
                 />
               </div>
-            </div>
-
-            {/* 応答状態 */}
-            <div>
-              <label className="text-[10px] font-mono uppercase tracking-widest text-gray-500 font-bold block mb-1">応答状態 (ステータス)</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ResponseStatus)}
-                className="w-full bg-[#0A0A0B] border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
-              >
-                {STATUS_OPTIONS.map((st) => (
-                  <option key={st} value={st}>
-                    {st}
-                  </option>
-                ))}
-              </select>
             </div>
 
             {/* 特徴一覧テキスト */}

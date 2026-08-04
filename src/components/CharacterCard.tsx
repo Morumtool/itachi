@@ -125,18 +125,12 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
             ) : (
               <div
                 className="p-1.5 text-gray-600 cursor-not-allowed flex items-center gap-1"
-                title="編集・削除には特定Discordサーバーへの参加が必要です"
+                title="編集・削除にはDiscordサーバー「イタチイタ鯖」への参加が必要です"
               >
                 <Lock className="w-3.5 h-3.5" />
               </div>
             )}
           </div>
-        </div>
-
-        {/* 応答ステータス */}
-        <div className="mb-3 flex items-center justify-between text-xs bg-[#0A0A0B] rounded-lg px-2.5 py-1.5 border border-white/5">
-          <span className="text-gray-400 font-mono text-[10px] uppercase font-bold">STATUS</span>
-          <span className="font-semibold text-gray-200">{character.status}</span>
         </div>
 
         {/* 特徴抜粋 */}

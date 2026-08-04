@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { DiscordUser } from '../types';
+import { UserAvatar } from './UserAvatar';
 import { X, CheckCircle2, ShieldAlert, LogOut, Disc as DiscordIcon, ExternalLink, AlertTriangle } from 'lucide-react';
 
 interface DiscordModalProps {
@@ -54,9 +55,12 @@ export const DiscordModal: React.FC<DiscordModalProps> = ({
               /* ログイン中表示 */
               <div className="space-y-5">
                 <div className="bg-[#0A0A0B] rounded-xl p-4 border border-white/10 flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-[#5865F2]/30 border-2 border-[#5865F2] flex items-center justify-center text-2xl shadow-lg">
-                    {currentUser.avatar}
-                  </div>
+                  <UserAvatar
+                    avatar={currentUser.avatar}
+                    name={currentUser.globalName}
+                    className="w-14 h-14 rounded-full border-2 border-[#5865F2] shadow-lg"
+                    iconClassName="w-7 h-7"
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="text-[10px] font-mono uppercase tracking-widest text-gray-500 font-bold">AUTHENTICATED USER</div>
                     <div className="font-bold text-lg text-white truncate">
@@ -81,8 +85,8 @@ export const DiscordModal: React.FC<DiscordModalProps> = ({
                     <div className="text-sm">
                       <div className="font-bold mb-1">
                         {currentUser.inTargetServer
-                          ? '特定Discordサーバー参加確認済み'
-                          : '特定Discordサーバー未参加'}
+                          ? 'Discordサーバー「イタチイタ鯖」参加確認済み'
+                          : 'Discordサーバー「イタチイタ鯖」未参加'}
                       </div>
                       <p className="text-xs opacity-90 leading-relaxed">
                         {currentUser.inTargetServer

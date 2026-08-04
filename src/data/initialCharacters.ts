@@ -14,7 +14,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: '田島に不可能はない。',
     favoriteFood: 'エナジードリンク',
     specialMove: 'タジマックスウェーブ / 自主規制ビーム',
-    status: '出撃中',
     features: [
       '「MAX」と言うだけで能力が上がると思っている。',
       '本人も何がMAXなのか分かっていない。',
@@ -34,7 +33,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'もうクライマックスです',
     favoriteFood: '山桃',
     specialMove: 'エンディング突入',
-    status: 'クライマックス突入',
     features: [
       '登場すると毎回話が終盤みたいな空気になる。',
       '実際は何もしていない。',
@@ -54,7 +52,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'お先に失礼！',
     favoriteFood: 'プロテイン',
     specialMove: '非常口ダッシュ',
-    status: '出撃中',
     features: [
       'ピンチになると超光速で撤退ルートを確保するスペシャリスト。',
       '撤退戦においては右に出る者がいない。',
@@ -73,7 +70,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: '悔しいです！',
     favoriteFood: '焼肉',
     specialMove: 'カッチカチストライク',
-    status: '出撃中',
     features: [
       '身体が重金属並みにカッチカチになる防御系ファイター。',
       '感情が高ぶると攻撃力が倍増する。',
@@ -92,7 +88,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'フレーム単位で見えてる',
     favoriteFood: 'エナジーゼリー',
     specialMove: 'フレームジャストキャンセル',
-    status: '出撃中',
     features: [
       '常にアーケードコントローラーを所持している。',
       '敵の技の発生フレームを完璧に見切り、確反（確定反撃）を入れる。',
@@ -111,7 +106,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'それ以上は言えません',
     favoriteFood: '（機密情報）',
     specialMove: '自主規制ビーム',
-    status: '自主規制中',
     features: [
       '名前を言うだけで謎の自主規制音（ピー音）が鳴る。',
       '何でも秘密扱いするため会話が全く進まない。',
@@ -131,7 +125,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'なぁ〜に〜！？やっちまったな！',
     favoriteFood: '餅',
     specialMove: '大杵ギガバスター',
-    status: '待機中',
     features: [
       '伝統的な男気を見せる戦士。',
       '敵の油断した行動を「やっちまったな！」と喝を入れて砕く。',
@@ -150,7 +143,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'オールインだ！',
     favoriteFood: '勝負勝つ（カツ丼）',
     specialMove: 'ラッキーセブンラッシュ',
-    status: '待機中',
     features: [
       'ダイスの出目によって攻撃力が0から10倍まで変動するギャンブルファイター。',
     ],
@@ -168,7 +160,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: '出汁が噴き出すぞ！',
     favoriteFood: 'じゃがいも',
     specialMove: '高圧煮汁スプリンクラー',
-    status: '待機中',
     features: [
       '頭部から熱々の肉じゃがの出汁を広範囲に散布する。',
       '敵をホカホカの出汁で満腹・和ませて戦意を喪失させる。',
@@ -187,7 +178,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: '意味がわかりません',
     favoriteFood: '水',
     specialMove: '思考停止ウェーブ',
-    status: '待機中',
     features: [
       '戦闘力はわずか5だが、発言の支離滅裂さで周囲を混乱させる謎のキャラクター。',
     ],
@@ -207,7 +197,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'ひまわりの種を捧げよ',
     favoriteFood: 'ひまわりの種',
     specialMove: '銀河モフモフ圧縮波',
-    status: '世界破壊準備中',
     features: [
       '敵勢力第1位。圧倒的モフモフエネルギーで地球を征服しようとしている悪の帝王。',
       '見た目の可愛さに反して戦闘力100の絶望的な破壊力を誇る。',
@@ -226,7 +215,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'ドメイン更新期限切れ',
     favoriteFood: 'ピーナッツバター',
     specialMove: 'サイバー殻クラッシュ',
-    status: '出撃中',
     features: [
       'ネット空間と現実を自由に行き来するサイバーテロ花生け。',
       '全WEBサイトのURLをピーナッツ化する野望を持つ。',
@@ -245,7 +233,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'ドカンといったれ！',
     favoriteFood: 'ダイナマイト',
     specialMove: 'ビッグバン・レボリューション',
-    status: '世界破壊準備中',
     features: [
       '組織そのものが1つの命としてカウントされる狂気の爆破集団。',
       '爆発こそが最高の芸術だと信じて疑わない。',
@@ -264,7 +251,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'All according to calculation.',
     favoriteFood: 'ブラックコーヒー',
     specialMove: 'アブソリュート・アナライズ',
-    status: '潜伏中',
     features: [
       '冷徹なる戦略AI人間。相手の動きを0.001秒で計算し尽くす。',
       '味方陣営の弱点をすべて解析済み。',
@@ -283,7 +269,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'もう寝ていいかしら？',
     favoriteFood: 'ホットミルク',
     specialMove: 'ディープスリープドリーム',
-    status: '睡眠中',
     features: [
       '寝ている間の方が強いという特殊な体質の刺客。',
       '夢の中で相手を翻弄する幻術の使い手。',
@@ -302,7 +287,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: '末尾の「。」を忘れるな',
     favoriteFood: '和菓子',
     specialMove: '句点バリア',
-    status: '待機中',
     features: [
       '「イグジット山田」とは無関係のダーク山田。',
       '名前の「。」に異常なこだわりを持ち、呼び捨てを許さない。',
@@ -321,7 +305,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'にゃー',
     favoriteFood: 'マタタビ',
     specialMove: 'ネコパンチ100連打',
-    status: '睡眠中',
     features: [
       '一見気まぐれな猫に見えるが、実は敵幹部の秘密兵器。',
     ],
@@ -339,7 +322,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: '三つ葉の幸運を奪うわ',
     favoriteFood: 'クローバーサラダ',
     specialMove: 'アンラッキー・トリニティ',
-    status: '潜伏中',
     features: [
       '相手の幸運度を吸い取り、自分を不敵に輝かせるトリッキーな能力者。',
     ],
@@ -357,7 +339,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: '年中無休で短パンだ！',
     favoriteFood: 'かき氷',
     specialMove: '生足キック',
-    status: '出撃中',
     features: [
       '極寒の地でも短パン一丁で走り回るタフガイ。',
       '膝小僧の強度がダイヤモンド級。',
@@ -376,7 +357,6 @@ export const INITIAL_CHARACTERS: Character[] = [
     catchphrase: 'ひらがな「れnの」やで',
     favoriteFood: 'たこ焼き',
     specialMove: 'Typoクラッシュ',
-    status: '待機中',
     features: [
       'タイポの文字を実体化して攻撃する不思議な能力の持ち主。',
     ],

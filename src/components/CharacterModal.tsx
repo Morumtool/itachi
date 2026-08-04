@@ -12,7 +12,6 @@ import {
   Utensils,
   Flame,
   User,
-  Activity,
 } from 'lucide-react';
 
 interface CharacterModalProps {
@@ -104,11 +103,6 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
                     className={`text-xs font-mono px-3 py-1 rounded-lg border font-bold ${rankColors.bg} ${rankColors.text} ${rankColors.border} ${rankColors.glow || ''}`}
                   >
                     RANK {character.rank}
-                  </span>
-
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#0A0A0B] text-gray-300 border border-white/10 flex items-center gap-1">
-                    <Activity className="w-3 h-3 text-indigo-400" />
-                    {character.status}
                   </span>
                 </div>
 

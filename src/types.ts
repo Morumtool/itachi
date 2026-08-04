@@ -1,14 +1,5 @@
 export type Alignment = 'ally' | 'enemy' | 'other';
 
-export type ResponseStatus =
-  | '出撃中'
-  | '待機中'
-  | 'クライマックス突入'
-  | '自主規制中'
-  | '睡眠中'
-  | '世界破壊準備中'
-  | '潜伏中';
-
 export interface Character {
   id: string;
   name: string;
@@ -21,7 +12,6 @@ export interface Character {
   catchphrase?: string; // 口癖
   favoriteFood?: string; // 好物
   specialMove?: string; // 必殺技
-  status: ResponseStatus;
   features: string[]; // 特徴・説明（改行テキストなど）
   isCustom?: boolean; // ユーザーが作成したキャラかどうか
   createdAt: number;

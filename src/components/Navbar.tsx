@@ -1,5 +1,6 @@
 import React from 'react';
 import { DiscordUser, ViewMode } from '../types';
+import { UserAvatar } from './UserAvatar';
 import {
   Disc as DiscordIcon,
   PlusCircle,
@@ -137,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               title={
                 isAuthorized
                   ? '新しいキャラクターを作成'
-                  : '作成には特定Discordサーバーへの参加が必要です'
+                  : '作成にはDiscordサーバー「イタチイタ鯖」への参加が必要です'
               }
             >
               <PlusCircle className="w-4 h-4 text-indigo-400" />
@@ -152,9 +153,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="flex items-center gap-2 px-2.5 py-1 rounded-lg hover:bg-white/5 transition-colors text-left"
                 >
                   <div className="relative">
-                    <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-sm">
-                      {currentUser.avatar}
-                    </div>
+                    <UserAvatar
+                      avatar={currentUser.avatar}
+                      name={currentUser.globalName}
+                      className="w-7 h-7 rounded-lg border border-indigo-500/40"
+                    />
                     <span
                       className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-[#0F0F12] ${
                         currentUser.inTargetServer ? 'bg-emerald-400' : 'bg-amber-400'
@@ -185,7 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="py-2 px-4 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-indigo-950/50 border border-indigo-400/20"
               >
                 <DiscordIcon className="w-4 h-4" />
-                <span>Login with Discord</span>
+                <span>Discordでログイン</span>
               </button>
             )}
 

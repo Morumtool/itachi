@@ -106,7 +106,7 @@ export const RankingTable: React.FC<RankingTableProps> = ({
             {/* テーブルヘッダー */}
             <thead>
               <tr className="bg-[#0F0F12] text-gray-500 font-bold text-[10px] uppercase font-mono tracking-widest border-b border-white/5">
-                <th className="py-3.5 px-4 w-16 text-center">RANKING</th>
+                <th className="py-3.5 px-3 sm:px-4 w-20 text-center whitespace-nowrap">RANKING</th>
                 <th className="py-3.5 px-4">CHARACTER</th>
                 <th className="py-3.5 px-4 w-48 sm:w-64">POWER LEVEL</th>
                 <th className="py-3.5 px-4 w-20 text-center">CLASS</th>
@@ -122,17 +122,17 @@ export const RankingTable: React.FC<RankingTableProps> = ({
 
                 // 1~3位の特別メダル背景
                 const isTop3 = rankNum <= 3;
-                let rankBg = 'text-zinc-400 font-bold';
+                let rankBg = 'text-zinc-400 font-bold text-xs sm:text-sm';
                 let crownColor = '';
 
                 if (rankNum === 1) {
-                  rankBg = 'text-amber-400 font-black text-base';
+                  rankBg = 'text-amber-400 font-bold text-xs sm:text-sm';
                   crownColor = 'text-amber-400';
                 } else if (rankNum === 2) {
-                  rankBg = 'text-slate-300 font-black text-base';
+                  rankBg = 'text-slate-300 font-bold text-xs sm:text-sm';
                   crownColor = 'text-slate-300';
                 } else if (rankNum === 3) {
-                  rankBg = 'text-amber-600 font-black text-base';
+                  rankBg = 'text-amber-600 font-bold text-xs sm:text-sm';
                   crownColor = 'text-amber-600';
                 }
 
@@ -146,9 +146,9 @@ export const RankingTable: React.FC<RankingTableProps> = ({
                     className="hover:bg-white/5 transition-colors cursor-pointer group"
                   >
                     {/* 順位 */}
-                    <td className="py-3.5 px-4 text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        {isTop3 && <Crown className={`w-4 h-4 ${crownColor}`} />}
+                    <td className="py-3.5 px-3 sm:px-4 text-center whitespace-nowrap">
+                      <div className="flex items-center justify-center gap-1 whitespace-nowrap">
+                        {isTop3 && <Crown className={`w-3.5 h-3.5 shrink-0 ${crownColor}`} />}
                         <span className={rankBg}>{rankNum}位</span>
                       </div>
                     </td>

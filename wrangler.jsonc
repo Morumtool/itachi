@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "itachita-app",
+  "pages_build_output_dir": "./dist",
+  "kv_namespaces": [
+    {
+      "binding": "CHARACTERS_KV",
+      "id": "your_kv_namespace_id"
+    }
+  ]
+}

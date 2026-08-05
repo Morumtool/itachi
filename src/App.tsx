@@ -7,7 +7,6 @@ import {
   seedInitialCharactersIfEmpty,
   saveCharacterToDb,
   deleteCharacterFromDb,
-  resetDatabaseToInitial,
 } from './lib/firebase';
 import { Navbar } from './components/Navbar';
 import { HeroStats } from './components/HeroStats';
@@ -23,7 +22,6 @@ import { parsePowerLevel } from './utils/powerLevel';
 import {
   Search,
   SlidersHorizontal,
-  RotateCcw,
   Sparkles,
   Shield,
   Swords,
@@ -216,19 +214,6 @@ export default function App() {
     }
   };
 
-  // 初期データにリセット（Firestore同期）
-  const handleResetData = async () => {
-    if (window.confirm('初期キャラクターデータ（20体）にリセットしますか？')) {
-      setCharacters(INITIAL_CHARACTERS);
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-      try {
-        await resetDatabaseToInitial(INITIAL_CHARACTERS);
-      } catch (err) {
-        console.error('Failed to reset Firestore database:', err);
-      }
-    }
-  };
-
   // ログアウト処理
   const handleLogout = async () => {
     setCurrentUser(null);
@@ -312,9 +297,9 @@ export default function App() {
               </p>
             </div>
 
-            {/* 権限状態バッジ & リセットボタン */}
-            <div className="z-10 flex flex-wrap items-center gap-2 shrink-0">
-              {!isAuthorized && (
+            {/* 権限状態バッジ */}
+            {!isAuthorized && (
+              <div className="z-10 flex flex-wrap items-center gap-2 shrink-0">
                 <button
                   onClick={() => setIsDiscordModalOpen(true)}
                   className="px-3 py-2 bg-amber-950/40 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-900/40 transition-colors"
@@ -322,16 +307,8 @@ export default function App() {
                   <Lock className="w-3.5 h-3.5 text-amber-400" />
                   <span>作成/編集にはDiscord「イタチイタ鯖」参加が必要</span>
                 </button>
-              )}
-
-              <button
-                onClick={handleResetData}
-                className="p-2.5 bg-[#0A0A0B] hover:bg-white/10 text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors"
-                title="初期データにリセット"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
-            </div>
+              </div>
+            )}
 
             {/* オーラデコレーション */}
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />

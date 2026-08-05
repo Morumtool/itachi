@@ -13,6 +13,7 @@ import {
   ShieldAlert,
   HelpCircle,
   Database,
+  Lock,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -39,106 +40,115 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-[#0F0F12]/95 backdrop-blur-md border-b border-white/10 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-2">
           
           {/* ロゴ・アプリタイトル */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onSelectView('catalog')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-cyan-400 to-rose-500 p-0.5 shadow-lg shadow-indigo-950/40">
+          <div className="flex items-center gap-3 cursor-pointer shrink-0" onClick={() => onSelectView('catalog')}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-cyan-400 to-rose-500 p-0.5 shadow-lg shadow-indigo-950/40 shrink-0">
               <div className="w-full h-full bg-[#0A0A0B] rounded-[10px] flex items-center justify-center font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-300 text-lg">
                 イ
               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-black text-base sm:text-lg tracking-tight text-white flex items-center gap-1.5">
+            <div className="shrink-0">
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <h1 className="font-black text-base sm:text-lg tracking-tight text-white flex items-center gap-1.5 whitespace-nowrap">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-cyan-300 to-white">
                     イタチイタ戦隊
                   </span>
-                  <span className="hidden md:inline text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <span className="hidden md:inline text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 whitespace-nowrap">
                     ARCHIVE
                   </span>
                 </h1>
               </div>
-              <p className="text-[10px] font-mono text-gray-400 hidden sm:block">
+              <p className="text-[10px] font-mono text-gray-400 hidden sm:block whitespace-nowrap">
                 TOTAL: <span className="text-white font-bold">{totalCharactersCount}</span> UNITS | COMBAT ARCHIVE
               </p>
             </div>
           </div>
 
           {/* ビュー切り替えタブ（デスクトップ） */}
-          <nav className="hidden md:flex items-center gap-1 bg-[#16161A] p-1 rounded-xl border border-white/5">
+          <nav className="hidden md:flex items-center gap-1 bg-[#16161A] p-1 rounded-xl border border-white/5 shrink-0">
             <button
               onClick={() => onSelectView('catalog')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 currentView === 'catalog'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/30'
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Users className="w-4 h-4" />
-              キャラ図鑑
+              <Users className="w-4 h-4 shrink-0" />
+              <span>キャラ図鑑</span>
             </button>
 
             <button
               onClick={() => onSelectView('ranking')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 currentView === 'ranking'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/30'
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Trophy className="w-4 h-4" />
-              ランキング表
+              <Trophy className="w-4 h-4 shrink-0" />
+              <span>ランキング表</span>
             </button>
 
             <button
               onClick={() => onSelectView('features')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 currentView === 'features'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/30'
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Sparkles className="w-4 h-4" />
-              特徴一覧
+              <Sparkles className="w-4 h-4 shrink-0" />
+              <span>特徴一覧</span>
             </button>
 
             <button
               onClick={() => onSelectView('guide')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 currentView === 'guide'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/30'
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <BookOpen className="w-4 h-4" />
-              公開ガイド
+              <BookOpen className="w-4 h-4 shrink-0" />
+              <span>公開ガイド</span>
             </button>
           </nav>
 
           {/* 右上アクションエリア（システムステータス・キャラ作成・ログイン） */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             
             {/* System Status Display */}
-            <div className="hidden lg:flex flex-col items-end mr-1">
-              <span className="text-[9px] uppercase tracking-widest text-gray-500 font-bold">SYSTEM STATUS</span>
-              <div className="flex items-center gap-1.5">
+            <div className="hidden xl:flex flex-col items-end mr-1 shrink-0">
+              <span className="text-[9px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">SYSTEM STATUS</span>
+              <div className="flex items-center gap-1.5 whitespace-nowrap">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
                 <span className="text-xs font-mono text-emerald-400 font-bold">OPERATIONAL</span>
               </div>
             </div>
 
-            <div className="hidden lg:block h-7 w-[1px] bg-white/10 mx-1"></div>
+            <div className="hidden xl:block h-7 w-[1px] bg-white/10 mx-1"></div>
 
             {/* Firestoreバックアップボタン */}
             <button
               onClick={onOpenBackupModal}
-              className="py-2 px-3 sm:px-3.5 rounded-xl font-bold text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-all flex items-center gap-1.5"
-              title="Cloud Firestoreのバックアップ管理・復元"
+              className={`py-2 px-3 sm:px-3.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 border whitespace-nowrap shrink-0 ${
+                isAuthorized
+                  ? 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border-amber-500/30'
+                  : 'bg-amber-950/20 hover:bg-amber-950/40 text-amber-400/80 border-amber-500/20'
+              }`}
+              title={
+                isAuthorized
+                  ? 'Cloud Firestoreのバックアップ管理・復元'
+                  : 'バックアップの利用にはDiscord「イタチイタ鯖」への参加が必要です'
+              }
             >
-              <Database className="w-4 h-4 text-amber-400" />
-              <span className="hidden md:inline">バックアップ</span>
+              <Database className="w-4 h-4 text-amber-400 shrink-0" />
+              <span className="hidden md:inline whitespace-nowrap">バックアップ</span>
+              {!isAuthorized && <Lock className="w-3 h-3 text-amber-400/80 shrink-0" />}
             </button>
 
             {/* 新規作成ボタン */}

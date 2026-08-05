@@ -12,6 +12,8 @@ import {
   ShieldCheck,
   FileJson,
   Plus,
+  Lock,
+  ShieldAlert,
 } from 'lucide-react';
 import { Character, FirestoreBackup } from '../types';
 import {
@@ -26,6 +28,8 @@ interface BackupModalProps {
   onClose: () => void;
   currentCharacterCount: number;
   characters: Character[];
+  isAuthorized: boolean;
+  onOpenDiscordModal: () => void;
 }
 
 export const BackupModal: React.FC<BackupModalProps> = ({
@@ -33,6 +37,8 @@ export const BackupModal: React.FC<BackupModalProps> = ({
   onClose,
   currentCharacterCount,
   characters,
+  isAuthorized,
+  onOpenDiscordModal,
 }) => {
   const [backups, setBackups] = useState<FirestoreBackup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,8 +71,19 @@ export const BackupModal: React.FC<BackupModalProps> = ({
     }, 4000);
   };
 
+  const checkAuthOrNotify = (): boolean => {
+    if (!isAuthorized) {
+      showMessage('error', 'バックアップの操作にはDiscord連携および「イタチイタ鯖」への参加が必要です。');
+      onOpenDiscordModal();
+      return false;
+    }
+    return true;
+  };
+
   // Cloud Firestoreへバックアップを作成
   const handleCreateBackup = async () => {
+    if (!checkAuthOrNotify()) return;
+
     setIsLoading(true);
     try {
       await createFirestoreBackup(noteInput.trim() || '手動バックアップ');
@@ -83,6 +100,8 @@ export const BackupModal: React.FC<BackupModalProps> = ({
 
   // バックアップから復元
   const handleRestore = async (backup: FirestoreBackup) => {
+    if (!checkAuthOrNotify()) return;
+
     if (!window.confirm(`「${backup.note || 'バックアップ'}」 (${backup.count}体) からデータを復元しますか？現在のデータは置き換わります。`)) {
       return;
     }
@@ -100,6 +119,8 @@ export const BackupModal: React.FC<BackupModalProps> = ({
 
   // バックアップの削除
   const handleDeleteBackup = async (backupId: string) => {
+    if (!checkAuthOrNotify()) return;
+
     if (!window.confirm('このバックアップ記録を削除してもよろしいですか？')) {
       return;
     }
@@ -118,6 +139,8 @@ export const BackupModal: React.FC<BackupModalProps> = ({
 
   // JSONファイルとしてダウンロード（ローカルバックアップ）
   const handleExportJson = () => {
+    if (!checkAuthOrNotify()) return;
+
     const backupObj = {
       version: '1.0',
       exportedAt: new Date().toISOString(),
@@ -136,6 +159,11 @@ export const BackupModal: React.FC<BackupModalProps> = ({
 
   // JSONファイルから復元（ファイルアップロード）
   const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!checkAuthOrNotify()) {
+      e.target.value = '';
+      return;
+    }
+
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -211,6 +239,23 @@ export const BackupModal: React.FC<BackupModalProps> = ({
             </button>
           </div>
 
+          {/* 未認証警告バナー */}
+          {!isAuthorized && (
+            <div className="p-4 bg-amber-950/60 border-b border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-200">
+              <div className="flex items-center gap-2 text-xs font-semibold">
+                <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0" />
+                <span>バックアップ機能を利用するにはDiscord連携と「イタチイタ鯖」参加が必要です。</span>
+              </div>
+              <button
+                onClick={onOpenDiscordModal}
+                className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Discord連携画面を開く</span>
+              </button>
+            </div>
+          )}
+
           {/* 通知メッセージ */}
           {statusMessage && (
             <div
@@ -228,10 +273,11 @@ export const BackupModal: React.FC<BackupModalProps> = ({
           {/* メインコンテンツエリア */}
           <div className="p-6 overflow-y-auto space-y-6 custom-scrollbar">
             {/* 新規スナップショット作成 */}
-            <div className="p-4 bg-white/5 border border-white/10 rounded-xl space-y-3">
+            <div className={`p-4 bg-white/5 border border-white/10 rounded-xl space-y-3 transition-opacity ${!isAuthorized ? 'opacity-60' : ''}`}>
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-amber-300 flex items-center gap-2">
                   <Plus className="w-4 h-4" /> 新規クラウドバックアップを作成
+                  {!isAuthorized && <Lock className="w-3.5 h-3.5 text-amber-400" />}
                 </h3>
                 <span className="text-xs text-gray-400">現在のキャラ数: {currentCharacterCount} 体</span>
               </div>
@@ -240,12 +286,13 @@ export const BackupModal: React.FC<BackupModalProps> = ({
                   type="text"
                   placeholder="バックアップのメモ (例: 大規模アップデート前)"
                   value={noteInput}
+                  disabled={!isAuthorized}
                   onChange={(e) => setNoteInput(e.target.value)}
-                  className="flex-1 px-3 py-2 bg-black/40 border border-white/10 rounded-lg text-xs text-white placeholder-gray-500 focus:outline-none focus:border-amber-500/50"
+                  className="flex-1 px-3 py-2 bg-black/40 border border-white/10 rounded-lg text-xs text-white placeholder-gray-500 focus:outline-none focus:border-amber-500/50 disabled:opacity-50 cursor-not-allowed"
                 />
                 <button
                   onClick={handleCreateBackup}
-                  disabled={isLoading}
+                  disabled={isLoading || !isAuthorized}
                   className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 shrink-0"
                 >
                   {isLoading ? (
@@ -302,15 +349,15 @@ export const BackupModal: React.FC<BackupModalProps> = ({
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={() => handleRestore(b)}
-                          disabled={isLoading}
-                          className="px-3 py-1.5 bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
+                          disabled={isLoading || !isAuthorized}
+                          className="px-3 py-1.5 bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors disabled:opacity-40"
                         >
                           <RefreshCw className="w-3.5 h-3.5" /> 復元
                         </button>
                         <button
                           onClick={() => handleDeleteBackup(b.id)}
-                          disabled={isLoading}
-                          className="p-1.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-500/20 rounded-lg transition-colors"
+                          disabled={isLoading || !isAuthorized}
+                          className="p-1.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-500/20 rounded-lg transition-colors disabled:opacity-40"
                           title="バックアップを削除"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -323,9 +370,10 @@ export const BackupModal: React.FC<BackupModalProps> = ({
             </div>
 
             {/* ローカルJSONファイル エクスポート / インポート */}
-            <div className="p-4 bg-indigo-950/20 border border-indigo-500/20 rounded-xl space-y-3">
+            <div className={`p-4 bg-indigo-950/20 border border-indigo-500/20 rounded-xl space-y-3 transition-opacity ${!isAuthorized ? 'opacity-60' : ''}`}>
               <h3 className="text-sm font-bold text-indigo-300 flex items-center gap-2">
                 <FileJson className="w-4 h-4" /> ファイル手動バックアップ (JSON)
+                {!isAuthorized && <Lock className="w-3.5 h-3.5 text-indigo-400" />}
               </h3>
               <p className="text-xs text-gray-400 leading-relaxed">
                 PCローカルにJSONファイルとしてキャラクターデータを書き出し・読み込みして復元できます。
@@ -333,16 +381,18 @@ export const BackupModal: React.FC<BackupModalProps> = ({
               <div className="flex flex-wrap gap-2 pt-1">
                 <button
                   onClick={handleExportJson}
-                  className="px-3.5 py-2 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/30 rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors"
+                  disabled={!isAuthorized}
+                  className="px-3.5 py-2 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/30 rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors disabled:opacity-40 cursor-not-allowed"
                 >
                   <Download className="w-4 h-4" /> JSONでダウンロード
                 </button>
 
-                <label className="px-3.5 py-2 bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 rounded-lg text-xs font-semibold flex items-center gap-2 cursor-pointer transition-colors">
+                <label className={`px-3.5 py-2 bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors ${!isAuthorized ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
                   <Upload className="w-4 h-4" /> JSONファイルから復元
                   <input
                     type="file"
                     accept=".json"
+                    disabled={!isAuthorized}
                     onChange={handleImportJson}
                     className="hidden"
                   />
@@ -365,3 +415,4 @@ export const BackupModal: React.FC<BackupModalProps> = ({
     </AnimatePresence>
   );
 };
+

@@ -306,19 +306,24 @@ export default function App() {
             <div className="z-10 flex flex-wrap items-center gap-2 shrink-0">
               <button
                 onClick={() => setIsBackupModalOpen(true)}
-                className="px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-500/20 transition-colors"
+                className={`px-3 py-2 border rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 ${
+                  isAuthorized
+                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
+                    : 'bg-amber-950/30 border-amber-500/20 text-amber-400 hover:bg-amber-900/30'
+                }`}
               >
-                <Database className="w-3.5 h-3.5 text-amber-400" />
-                <span>Firestore バックアップ</span>
+                <Database className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className="whitespace-nowrap">Firestore バックアップ</span>
+                {!isAuthorized && <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
               </button>
 
               {!isAuthorized && (
                 <button
                   onClick={() => setIsDiscordModalOpen(true)}
-                  className="px-3 py-2 bg-amber-950/40 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-900/40 transition-colors"
+                  className="px-3 py-2 bg-amber-950/40 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-900/40 transition-colors whitespace-nowrap shrink-0"
                 >
-                  <Lock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>作成/編集にはDiscord「イタチイタ鯖」参加が必要</span>
+                  <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span className="whitespace-nowrap">作成/編集/バックアップ: Discord「イタチイタ鯖」参加要</span>
                 </button>
               )}
             </div>
@@ -509,6 +514,8 @@ export default function App() {
         onClose={() => setIsBackupModalOpen(false)}
         currentCharacterCount={characters.length}
         characters={characters}
+        isAuthorized={isAuthorized}
+        onOpenDiscordModal={() => setIsDiscordModalOpen(true)}
       />
 
 

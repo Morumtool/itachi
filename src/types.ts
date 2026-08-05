@@ -26,3 +26,11 @@ export interface DiscordUser {
 }
 
 export type ViewMode = 'catalog' | 'ranking' | 'features' | 'guide';
+
+export interface FirestoreBackup {
+  id: string;
+  createdAt: number;
+  note?: string;
+  count: number;
+  data: Character[];
+}

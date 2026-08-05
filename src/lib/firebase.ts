@@ -11,7 +11,7 @@ import {
   query,
   orderBy,
 } from 'firebase/firestore';
-import { Character } from '../types';
+import { Character, FirestoreBackup } from '../types';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
@@ -22,10 +22,12 @@ export const db = getFirestore(
 );
 
 const CHARACTERS_COLLECTION = 'characters';
+const BACKUPS_COLLECTION = 'backups';
 
 /**
  * Realtime subscription to characters collection.
  */
+
 export function subscribeCharacters(
   onUpdate: (characters: Character[]) => void,
   onError?: (err: Error) => void
@@ -104,18 +106,64 @@ export async function deleteCharacterFromDb(id: string): Promise<void> {
 }
 
 /**
- * Reset Firestore collection back to initial default characters.
+ * Create a snapshot backup of current characters collection in Firestore.
  */
-export async function resetDatabaseToInitial(initialChars: Character[]): Promise<void> {
+export async function createFirestoreBackup(note?: string): Promise<FirestoreBackup> {
   const colRef = collection(db, CHARACTERS_COLLECTION);
   const snapshot = await getDocs(colRef);
+  const currentChars: Character[] = snapshot.docs.map((docSnap) => docSnap.data() as Character);
+
+  const backupId = `backup_${Date.now()}`;
+  const backupData: FirestoreBackup = {
+    id: backupId,
+    createdAt: Date.now(),
+    note: note || '手動バックアップ',
+    count: currentChars.length,
+    data: currentChars,
+  };
+
+  const backupDocRef = doc(db, BACKUPS_COLLECTION, backupId);
+  await setDoc(backupDocRef, JSON.parse(JSON.stringify(backupData)));
+  return backupData;
+}
+
+/**
+ * Get all backups stored in Firestore ordered by creation date desc.
+ */
+export async function getFirestoreBackups(): Promise<FirestoreBackup[]> {
+  const colRef = collection(db, BACKUPS_COLLECTION);
+  const q = query(colRef, orderBy('createdAt', 'desc'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((docSnap) => docSnap.data() as FirestoreBackup);
+}
+
+/**
+ * Restore characters from a Firestore backup snapshot.
+ */
+export async function restoreFirestoreBackup(backupData: FirestoreBackup): Promise<void> {
+  const colRef = collection(db, CHARACTERS_COLLECTION);
+  const snapshot = await getDocs(colRef);
+
   const batch = writeBatch(db);
+  // Delete existing characters
   snapshot.docs.forEach((docSnap) => {
     batch.delete(docSnap.ref);
   });
-  initialChars.forEach((char) => {
+
+  // Restore backup characters
+  backupData.data.forEach((char) => {
     const docRef = doc(db, CHARACTERS_COLLECTION, char.id);
-    batch.set(docRef, char);
+    batch.set(docRef, JSON.parse(JSON.stringify(char)));
   });
+
   await batch.commit();
 }
+
+/**
+ * Delete a backup from Firestore.
+ */
+export async function deleteFirestoreBackup(backupId: string): Promise<void> {
+  const docRef = doc(db, BACKUPS_COLLECTION, backupId);
+  await deleteDoc(docRef);
+}
+

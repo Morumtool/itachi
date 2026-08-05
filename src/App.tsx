@@ -15,6 +15,7 @@ import { CharacterModal } from './components/CharacterModal';
 import { CharacterFormModal } from './components/CharacterFormModal';
 import { DeleteConfirmModal } from './components/DeleteConfirmModal';
 import { DiscordModal } from './components/DiscordModal';
+import { BackupModal } from './components/BackupModal';
 import { RankingTable } from './components/RankingTable';
 import { FeatureList } from './components/FeatureList';
 import { DeploymentGuide } from './components/DeploymentGuide';
@@ -27,6 +28,7 @@ import {
   Swords,
   Users,
   Lock,
+  Database,
 } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'itachi_characters_v2';
@@ -81,6 +83,7 @@ export default function App() {
   const [isDiscordModalOpen, setIsDiscordModalOpen] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const [deletingCharacter, setDeletingCharacter] = useState<Character | null>(null);
@@ -277,6 +280,7 @@ export default function App() {
             setIsFormModalOpen(true);
           }
         }}
+        onOpenBackupModal={() => setIsBackupModalOpen(true)}
         totalCharactersCount={characters.length}
       />
 
@@ -298,9 +302,17 @@ export default function App() {
               </p>
             </div>
 
-            {/* 権限状態バッジ */}
-            {!isAuthorized && (
-              <div className="z-10 flex flex-wrap items-center gap-2 shrink-0">
+            {/* 操作・権限バッジエリア */}
+            <div className="z-10 flex flex-wrap items-center gap-2 shrink-0">
+              <button
+                onClick={() => setIsBackupModalOpen(true)}
+                className="px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-500/20 transition-colors"
+              >
+                <Database className="w-3.5 h-3.5 text-amber-400" />
+                <span>Firestore バックアップ</span>
+              </button>
+
+              {!isAuthorized && (
                 <button
                   onClick={() => setIsDiscordModalOpen(true)}
                   className="px-3 py-2 bg-amber-950/40 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-900/40 transition-colors"
@@ -308,8 +320,9 @@ export default function App() {
                   <Lock className="w-3.5 h-3.5 text-amber-400" />
                   <span>作成/編集にはDiscord「イタチイタ鯖」参加が必要</span>
                 </button>
-              </div>
-            )}
+              )}
+            </div>
+
 
             {/* オーラデコレーション */}
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -490,6 +503,14 @@ export default function App() {
         onLogout={handleLogout}
         envError={envError}
       />
+
+      <BackupModal
+        isOpen={isBackupModalOpen}
+        onClose={() => setIsBackupModalOpen(false)}
+        currentCharacterCount={characters.length}
+        characters={characters}
+      />
+
 
     </div>
   );

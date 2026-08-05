@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   HelpCircle,
+  Database,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -20,6 +21,7 @@ interface NavbarProps {
   currentUser: DiscordUser | null;
   onOpenDiscordModal: () => void;
   onOpenCreateModal: () => void;
+  onOpenBackupModal: () => void;
   totalCharactersCount: number;
 }
 
@@ -29,9 +31,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentUser,
   onOpenDiscordModal,
   onOpenCreateModal,
+  onOpenBackupModal,
   totalCharactersCount,
 }) => {
   const isAuthorized = currentUser && currentUser.inTargetServer;
+
 
   return (
     <header className="sticky top-0 z-40 bg-[#0F0F12]/95 backdrop-blur-md border-b border-white/10 transition-colors">
@@ -127,7 +131,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <div className="hidden lg:block h-7 w-[1px] bg-white/10 mx-1"></div>
 
+            {/* Firestoreバックアップボタン */}
+            <button
+              onClick={onOpenBackupModal}
+              className="py-2 px-3 sm:px-3.5 rounded-xl font-bold text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-all flex items-center gap-1.5"
+              title="Cloud Firestoreのバックアップ管理・復元"
+            >
+              <Database className="w-4 h-4 text-amber-400" />
+              <span className="hidden md:inline">バックアップ</span>
+            </button>
+
             {/* 新規作成ボタン */}
+
             <button
               onClick={onOpenCreateModal}
               className={`py-2 px-3.5 sm:px-4 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 border ${

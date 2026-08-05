@@ -99,9 +99,10 @@ export default function App() {
   // Firestore リアルタイム同期 & 初期データシード
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
-    seedInitialCharactersIfEmpty(INITIAL_CHARACTERS).then(() => {
+    // ローカルストレージ内の既存キャラクターも含めてシード・同期チェック
+    seedInitialCharactersIfEmpty(characters).then(() => {
       unsubscribe = subscribeCharacters((updatedChars) => {
-        if (updatedChars && updatedChars.length > 0) {
+        if (updatedChars) {
           setCharacters(updatedChars);
         }
       });

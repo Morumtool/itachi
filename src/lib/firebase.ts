@@ -47,7 +47,8 @@ export function subscribeCharacters(
 }
 
 /**
- * Seed initial characters into Firestore if the collection is empty.
+ * Seed initial characters into Firestore if the collection is empty,
+ * or sync missing local characters to Firestore if any exist.
  */
 export async function seedInitialCharactersIfEmpty(initialChars: Character[]): Promise<Character[]> {
   try {
@@ -57,12 +58,26 @@ export async function seedInitialCharactersIfEmpty(initialChars: Character[]): P
       const batch = writeBatch(db);
       initialChars.forEach((char) => {
         const docRef = doc(db, CHARACTERS_COLLECTION, char.id);
-        batch.set(docRef, char);
+        batch.set(docRef, JSON.parse(JSON.stringify(char)));
       });
       await batch.commit();
       return initialChars;
     } else {
-      return snapshot.docs.map((docSnap) => docSnap.data() as Character);
+      const existingDocs = snapshot.docs.map((docSnap) => docSnap.data() as Character);
+      const existingIds = new Set(existingDocs.map((c) => c.id));
+      
+      // If there are local items (e.g. newly created custom characters) missing in Firestore, sync them
+      const missingLocalChars = initialChars.filter((c) => !existingIds.has(c.id));
+      if (missingLocalChars.length > 0) {
+        const batch = writeBatch(db);
+        missingLocalChars.forEach((char) => {
+          const docRef = doc(db, CHARACTERS_COLLECTION, char.id);
+          batch.set(docRef, JSON.parse(JSON.stringify(char)));
+        });
+        await batch.commit();
+      }
+
+      return existingDocs;
     }
   } catch (err) {
     console.error('Error seeding initial characters to Firestore:', err);

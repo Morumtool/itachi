@@ -107,6 +107,7 @@ export async function deleteCharacterFromDb(id: string): Promise<void> {
 
 /**
  * Create a snapshot backup of current characters collection in Firestore.
+ * Characters are saved in subcollection backups/{backupId}/items to prevent exceeding 1MB document size limits.
  */
 export async function createFirestoreBackup(note?: string): Promise<FirestoreBackup> {
   const colRef = collection(db, CHARACTERS_COLLECTION);
@@ -114,17 +115,30 @@ export async function createFirestoreBackup(note?: string): Promise<FirestoreBac
   const currentChars: Character[] = snapshot.docs.map((docSnap) => docSnap.data() as Character);
 
   const backupId = `backup_${Date.now()}`;
-  const backupData: FirestoreBackup = {
+  const backupMeta = {
     id: backupId,
     createdAt: Date.now(),
     note: note || '手動バックアップ',
     count: currentChars.length,
-    data: currentChars,
   };
 
+  // Save metadata document (without large character data array)
   const backupDocRef = doc(db, BACKUPS_COLLECTION, backupId);
-  await setDoc(backupDocRef, JSON.parse(JSON.stringify(backupData)));
-  return backupData;
+  await setDoc(backupDocRef, backupMeta);
+
+  // Save individual character documents into subcollection backups/{backupId}/items
+  const BATCH_SIZE = 400;
+  for (let i = 0; i < currentChars.length; i += BATCH_SIZE) {
+    const chunk = currentChars.slice(i, i + BATCH_SIZE);
+    const batch = writeBatch(db);
+    chunk.forEach((char) => {
+      const itemDocRef = doc(db, BACKUPS_COLLECTION, backupId, 'items', char.id);
+      batch.set(itemDocRef, JSON.parse(JSON.stringify(char)));
+    });
+    await batch.commit();
+  }
+
+  return { ...backupMeta, data: currentChars };
 }
 
 /**
@@ -134,35 +148,76 @@ export async function getFirestoreBackups(): Promise<FirestoreBackup[]> {
   const colRef = collection(db, BACKUPS_COLLECTION);
   const q = query(colRef, orderBy('createdAt', 'desc'));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((docSnap) => docSnap.data() as FirestoreBackup);
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      createdAt: data.createdAt || Date.now(),
+      note: data.note || '手動バックアップ',
+      count: data.count || 0,
+      data: data.data, // Legacy backup data if present
+    } as FirestoreBackup;
+  });
 }
 
 /**
  * Restore characters from a Firestore backup snapshot.
  */
 export async function restoreFirestoreBackup(backupData: FirestoreBackup): Promise<void> {
-  const colRef = collection(db, CHARACTERS_COLLECTION);
-  const snapshot = await getDocs(colRef);
+  let charactersToRestore: Character[] = [];
 
-  const batch = writeBatch(db);
-  // Delete existing characters
-  snapshot.docs.forEach((docSnap) => {
-    batch.delete(docSnap.ref);
-  });
+  if (backupData.data && backupData.data.length > 0) {
+    // Legacy single document backup format
+    charactersToRestore = backupData.data;
+  } else {
+    // Fetch items from subcollection
+    const itemsColRef = collection(db, BACKUPS_COLLECTION, backupData.id, 'items');
+    const itemsSnap = await getDocs(itemsColRef);
+    charactersToRestore = itemsSnap.docs.map((d) => d.data() as Character);
+  }
 
-  // Restore backup characters
-  backupData.data.forEach((char) => {
-    const docRef = doc(db, CHARACTERS_COLLECTION, char.id);
-    batch.set(docRef, JSON.parse(JSON.stringify(char)));
-  });
+  // Delete current characters in characters collection
+  const charColRef = collection(db, CHARACTERS_COLLECTION);
+  const currentSnap = await getDocs(charColRef);
 
-  await batch.commit();
+  const BATCH_SIZE = 400;
+  const docsToDelete = currentSnap.docs;
+  for (let i = 0; i < docsToDelete.length; i += BATCH_SIZE) {
+    const chunk = docsToDelete.slice(i, i + BATCH_SIZE);
+    const batch = writeBatch(db);
+    chunk.forEach((docSnap) => batch.delete(docSnap.ref));
+    await batch.commit();
+  }
+
+  // Restore backup characters into characters collection
+  for (let i = 0; i < charactersToRestore.length; i += BATCH_SIZE) {
+    const chunk = charactersToRestore.slice(i, i + BATCH_SIZE);
+    const batch = writeBatch(db);
+    chunk.forEach((char) => {
+      const docRef = doc(db, CHARACTERS_COLLECTION, char.id);
+      batch.set(docRef, JSON.parse(JSON.stringify(char)));
+    });
+    await batch.commit();
+  }
 }
 
 /**
- * Delete a backup from Firestore.
+ * Delete a backup from Firestore (including subcollection items).
  */
 export async function deleteFirestoreBackup(backupId: string): Promise<void> {
+  // Delete subcollection items
+  const itemsColRef = collection(db, BACKUPS_COLLECTION, backupId, 'items');
+  const itemsSnap = await getDocs(itemsColRef);
+
+  const BATCH_SIZE = 400;
+  for (let i = 0; i < itemsSnap.docs.length; i += BATCH_SIZE) {
+    const chunk = itemsSnap.docs.slice(i, i + BATCH_SIZE);
+    const batch = writeBatch(db);
+    chunk.forEach((docSnap) => batch.delete(docSnap.ref));
+    await batch.commit();
+  }
+
+  // Delete main backup document
   const docRef = doc(db, BACKUPS_COLLECTION, backupId);
   await deleteDoc(docRef);
 }

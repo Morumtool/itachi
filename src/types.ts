@@ -32,5 +32,5 @@ export interface FirestoreBackup {
   createdAt: number;
   note?: string;
   count: number;
-  data: Character[];
+  data?: Character[];
 }
